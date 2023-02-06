@@ -40,12 +40,13 @@ const SignUpForm = () => {
         email,
         password
       );
-      const userDocRef = await createUserDocumentFromAuth(user, {
+      await createUserDocumentFromAuth(user, {
         displayName,
       });
       resetFormFields();
     } catch (error) {
       console.error(error);
+      alert(error);
     }
   };
 
