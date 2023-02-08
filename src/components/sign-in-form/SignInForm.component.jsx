@@ -2,7 +2,6 @@ import FormInput from "../../components/form-input/FormInput.component";
 import { useState } from "react";
 import {
   sighInWithGooglePopup,
-  createUserDocumentFromAuth,
   signInUserWithEmail,
 } from "../../utils/firebase/firebase.utils";
 import Button from "../../components/button/Button.component";
@@ -11,15 +10,15 @@ import "./SignUpForm.styles.scss";
 const defaultFormat = { email: "", password: "" };
 
 const SignInform = () => {
-  const logGoogleUser = async () => {
-    const { user } = await sighInWithGooglePopup();
-    await createUserDocumentFromAuth(user);
-  };
   const [format, setFormat] = useState(defaultFormat);
   const { email, password } = format;
 
   const resetFormat = () => {
     setFormat(defaultFormat);
+  };
+
+  const logGoogleUser = async () => {
+    await sighInWithGooglePopup();
   };
 
   const handleChange = (event) => {
