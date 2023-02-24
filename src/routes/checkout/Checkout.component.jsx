@@ -33,7 +33,7 @@ export default function Checkout() {
         const { id } = item;
         return <CheckoutItem key={id} cartItem={item} />;
       })}
-      <span className='total'>Total: {total}</span>
+      <span className='total'>Total: ${total}</span>
     </div>
   );
 }
