@@ -4,7 +4,10 @@ import { CartContext } from '../../contexts/cart.context';
 import React, { useContext } from 'react';
 
 export default function CartIcon() {
-  const { setIsOpen } = useContext(CartContext);
+  const { cartItems, setIsOpen } = useContext(CartContext);
+
+  const totalQuantity = cartItems.reduce((acc, cur) => acc + cur.quantity, 0);
+
   return (
     <div
       className='cart-icon-container'
@@ -13,7 +16,7 @@ export default function CartIcon() {
       }}
     >
       <ShoppingIcon className='shopping-icon' />
-      <span className='item-count'>10</span>
+      <span className='item-count'>{totalQuantity}</span>
     </div>
   );
 }
