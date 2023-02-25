@@ -1,4 +1,4 @@
-import { initializeApp } from "firebase/app";
+import { initializeApp } from 'firebase/app';
 import {
   getAuth,
   signInWithRedirect,
@@ -8,17 +8,27 @@ import {
   createUserWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
-} from "firebase/auth";
-import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
+} from 'firebase/auth';
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  collection,
+  writeBatch,
+  query,
+  getDocs,
+  where,
+} from 'firebase/firestore';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyC2gyi1eCHZ0wYcKzG8xSKuhF4MYUFiVO8",
-  authDomain: "crwn-my-db-abc44.firebaseapp.com",
-  projectId: "crwn-my-db-abc44",
-  storageBucket: "crwn-my-db-abc44.appspot.com",
-  messagingSenderId: "882651709034",
-  appId: "1:882651709034:web:1a7c9465d87667e0451413",
+  apiKey: 'AIzaSyC2gyi1eCHZ0wYcKzG8xSKuhF4MYUFiVO8',
+  authDomain: 'crwn-my-db-abc44.firebaseapp.com',
+  projectId: 'crwn-my-db-abc44',
+  storageBucket: 'crwn-my-db-abc44.appspot.com',
+  messagingSenderId: '882651709034',
+  appId: '1:882651709034:web:1a7c9465d87667e0451413',
 };
 
 // Initialize Firebase
@@ -26,7 +36,7 @@ const firebaseApp = initializeApp(firebaseConfig);
 const googleProvider = new GoogleAuthProvider();
 
 googleProvider.setCustomParameters({
-  prompt: "select_account",
+  prompt: 'select_account',
 });
 
 export const auth = getAuth();
@@ -42,9 +52,36 @@ export const signInUserWithEmail = async (email, password) => {
 
 export const db = getFirestore();
 
+export const addCollectionAndDocuments = async (
+  collectionKey,
+  objectsToAdd,
+  field = 'title'
+) => {
+  const collectionRef = collection(db, collectionKey);
+  const batch = writeBatch(db);
+  objectsToAdd.forEach((object) => {
+    const docRef = doc(collectionRef, object[field].toLowerCase());
+    batch.set(docRef, object);
+  });
+  await batch.commit();
+  console.log('done');
+};
+
+export const getCategoriesAndDocuments = async () => {
+  const collectionRef = collection(db, 'categories');
+  const q = query(collectionRef);
+  const querySnapshot = await getDocs(q);
+  const categoryMap = querySnapshot.docs.reduce((acc, docSnapshot) => {
+    const { title, items } = docSnapshot.data();
+    acc[title.toLowerCase()] = items;
+    return acc;
+  }, {});
+  return categoryMap;
+};
+
 export const createUserDocumentFromAuth = async (userAuth, additional) => {
   if (!userAuth) return;
-  const userDocRef = doc(db, "users", userAuth.uid);
+  const userDocRef = doc(db, 'users', userAuth.uid);
   const userSnapshot = await getDoc(userDocRef);
   // if not exist, create /set the user data document in my collection
   if (!userSnapshot.exists()) {
@@ -58,7 +95,7 @@ export const createUserDocumentFromAuth = async (userAuth, additional) => {
         ...additional,
       });
     } catch (error) {
-      console.log("error creating the user: " + error);
+      console.log('error creating the user: ' + error);
     }
   }
   // if exist, return
