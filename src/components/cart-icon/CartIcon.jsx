@@ -16,7 +16,7 @@ export default function CartIcon() {
   return (
     <CartIconContainer
       onClick={() => {
-        setIsOpen((current) => !current);
+        setIsOpen('toggle');
       }}
     >
       <StyledShoppingIcon />
